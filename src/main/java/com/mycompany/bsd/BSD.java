@@ -3,6 +3,7 @@
  */
 
 package com.mycompany.bsd;
+import baseDatos.ConexionOracle;
 
 /**
  *
@@ -11,6 +12,10 @@ package com.mycompany.bsd;
 public class BSD {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        
+        //importar la base de datos
+        ConexionOracle conn = new ConexionOracle();
+        conn.conectar();
+        conn.desconectar();
     }
 }
