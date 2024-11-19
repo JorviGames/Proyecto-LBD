@@ -3,6 +3,8 @@
  */
 
 package com.mycompany.bsd;
+import Jframes.Menu;
+import Jframes.Sucursales;
 import baseDatos.ConexionOracle;
 
 /**
@@ -14,8 +16,13 @@ public class BSD {
     public static void main(String[] args) {
         
         //importar la base de datos
-        ConexionOracle conn = new ConexionOracle();
+       /* ConexionOracle conn = new ConexionOracle();
         conn.conectar();
-        conn.desconectar();
+        conn.desconectar(); */
+       
+       Menu menu = new Menu();
+       
+       menu.setVisible(true);
+       
     }
 }
