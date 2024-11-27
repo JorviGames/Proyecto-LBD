@@ -4,22 +4,33 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Sucursal;
+import java.awt.event.WindowEvent;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author yorvi
  */
-public class Sucursales extends javax.swing.JFrame {
+public final class Sucursales extends javax.swing.JFrame {
 
     /**
      * Creates new form Sucursales
      */
-    public Sucursales() {
-        initComponents();
-        setTitle("Gestión de Sucursales");
-        setLocationRelativeTo(null);
-        setResizable(false);
-    }
+public Sucursales() {
+    initComponents();
+    setTitle("Gestión de Sucursales");
+    setLocationRelativeTo(null);
+    setResizable(false);
+    llenarTabla();
+}
 
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,6 +46,7 @@ public class Sucursales extends javax.swing.JFrame {
         T_Sucu = new javax.swing.JTable();
         B_Editar = new javax.swing.JButton();
         B_Eliminar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -87,6 +99,9 @@ public class Sucursales extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel1.setText("Gestión de Sucursales");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -96,21 +111,24 @@ public class Sucursales extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(B_agregarSC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(B_Editar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(B_Eliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(136, 136, 136))))
+                        .addGap(237, 237, 237)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(B_agregarSC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B_Editar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B_Eliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(136, 136, 136))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
                 .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -128,6 +146,54 @@ public class Sucursales extends javax.swing.JFrame {
 
     private void B_agregarSCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarSCActionPerformed
         // TODO add your handling code here:
+
+        String codSucursalStr = JOptionPane.showInputDialog(this, "Ingrese el código de la sucursal:");
+        if (codSucursalStr == null || codSucursalStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El código de sucursal no puede estar vacío.");
+            return;
+        }
+
+        String correo = JOptionPane.showInputDialog(this, "Ingrese el correo de la sucursal:");
+        if (correo == null || correo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El correo no puede estar vacío.");
+            return;
+        }
+
+        String direccion = JOptionPane.showInputDialog(this, "Ingrese la dirección de la sucursal:");
+        if (direccion == null || direccion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La dirección no puede estar vacía.");
+            return;
+        }
+
+        String telefono = JOptionPane.showInputDialog(this, "Ingrese el teléfono de la sucursal:");
+        if (telefono == null || telefono.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El teléfono no puede estar vacío.");
+            return;
+        }
+
+        int codSucursal;
+        try {
+            codSucursal = Integer.parseInt(codSucursalStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El código de sucursal debe ser un número.");
+            return;
+        }
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+
+        Sucursal sucursal = new Sucursal(conexion.getConnection());
+
+        boolean success = sucursal.AgregarSucursal(codSucursal, correo, direccion, telefono);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Sucursal agregada exitosamente.");
+
+            sucursal.llenar(T_Sucu);  
+        } else {
+  
+            JOptionPane.showMessageDialog(this, "Error al agregar la sucursal.");
+        }
     }//GEN-LAST:event_B_agregarSCActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -142,10 +208,12 @@ public class Sucursales extends javax.swing.JFrame {
 
     private void B_EditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_EditarActionPerformed
         // TODO add your handling code here:
+        editarSucursal();
     }//GEN-LAST:event_B_EditarActionPerformed
 
     private void B_EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_EliminarActionPerformed
         // TODO add your handling code here:
+        eliminarSucursal();
     }//GEN-LAST:event_B_EliminarActionPerformed
 
     /**
@@ -182,6 +250,110 @@ public class Sucursales extends javax.swing.JFrame {
             }
         });
     }
+    
+        
+public void llenarTabla() {
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();
+    
+    Sucursal sucursal = new Sucursal(conexion.getConnection());
+    DefaultTableModel model = sucursal.ObtenerSucursal();
+    
+    if (model.getRowCount() > 0) {
+        T_Sucu.setModel(model);
+        System.out.println("Datos añadidos a la tabla.");
+    } else {
+        System.out.println("No se encontraron datos para mostrar.");
+    }
+}
+
+private void editarSucursal() {
+    int selectedRow = T_Sucu.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_Sucu.getModel();
+        int codSucursal = (int) model.getValueAt(selectedRow, 0);
+        String correo = (String) model.getValueAt(selectedRow, 1);
+        String direccion = (String) model.getValueAt(selectedRow, 2);
+        String telefono = (String) model.getValueAt(selectedRow, 3);
+
+        boolean continuar = true;
+        while (continuar) {
+            String[] options = {"Correo", "Dirección", "Teléfono", "Cancelar"};
+            int choice = JOptionPane.showOptionDialog(this,
+                "¿Qué campo desea actualizar?",
+                "Seleccionar Campo",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+            switch (choice) {
+                case 0:
+                    correo = JOptionPane.showInputDialog(this, "Correo:", correo);
+                    break;
+                case 1:
+                    direccion = JOptionPane.showInputDialog(this, "Dirección:", direccion);
+                    break;
+                case 2:
+                    telefono = JOptionPane.showInputDialog(this, "Teléfono:", telefono);
+                    break;
+                case 3:
+                    continuar = false;
+                    break;
+                default:
+                    continuar = false;
+                    break;
+            }
+
+            if (choice != 3 && choice != JOptionPane.CLOSED_OPTION) {
+                int more = JOptionPane.showConfirmDialog(this, "¿Desea actualizar otro campo?", "Continuar", JOptionPane.YES_NO_OPTION);
+                continuar = (more == JOptionPane.YES_OPTION);
+            } else {
+                continuar = false;
+            }
+        }
+
+        // Actualizar la base de datos
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Sucursal sucursalDAO = new Sucursal(conexion.getConnection());
+        sucursalDAO.actualizarSucursal(codSucursal, correo, direccion, telefono);
+        conexion.desconectar();
+
+        // Volver a llenar la tabla con los datos actualizados
+        llenarTabla();
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione una sucursal para editar.");
+    }
+}
+
+private void eliminarSucursal() {
+    int selectedRow = T_Sucu.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_Sucu.getModel();
+        int codSucursal = (int) model.getValueAt(selectedRow, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar la sucursal seleccionada?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Eliminar la sucursal de la base de datos
+            DatabaseConnection conexion = new DatabaseConnection();
+            conexion.conectarJ();
+            Sucursal sucursalDAO = new Sucursal(conexion.getConnection());
+            sucursalDAO.eliminarSucursal(codSucursal);
+            conexion.desconectar();
+
+            // Volver a llenar la tabla con los datos actualizados
+            llenarTabla();
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione una sucursal para eliminar.");
+    }
+}
+
+
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_Editar;
@@ -189,6 +361,7 @@ public class Sucursales extends javax.swing.JFrame {
     private javax.swing.JButton B_agregarSC;
     private javax.swing.JTable T_Sucu;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

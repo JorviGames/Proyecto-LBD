@@ -6,6 +6,7 @@ package com.mycompany.bsd;
 import Jframes.Menu;
 import Jframes.Sucursales;
 import baseDatos.ConexionOracle;
+import baseDatos.DatabaseConnection;
 
 /**
  *
@@ -20,9 +21,12 @@ public class BSD {
         conn.conectar();
         conn.desconectar(); */
        
-       Menu menu = new Menu();
+       DatabaseConnection conexion = new DatabaseConnection();
        
+       Menu menu = new Menu();
        menu.setVisible(true);
        
+       Runtime.getRuntime().addShutdownHook(new Thread(() -> { 
+           conexion.desconectar(); }));
     }
 }

@@ -39,7 +39,6 @@ public class Menu extends javax.swing.JFrame {
         G_EMPL = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(614, 560));
         setResizable(false);
 
         G_SUC.setText("Gestion de Sucursales");
@@ -54,6 +53,11 @@ public class Menu extends javax.swing.JFrame {
         G_DEP.setText("Gestion de Departamentos");
         G_DEP.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         G_DEP.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        G_DEP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                G_DEPActionPerformed(evt);
+            }
+        });
 
         G_FACT.setText("Gestion de Facturacion ");
         G_FACT.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -130,6 +134,13 @@ public class Menu extends javax.swing.JFrame {
        LOL.setVisible(true);
        setVisible(false);
     }//GEN-LAST:event_G_SUCActionPerformed
+
+    private void G_DEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_G_DEPActionPerformed
+        // TODO add your handling code here:
+        Departamentos DEP = new Departamentos();
+        DEP.setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_G_DEPActionPerformed
 
     /**
      * @param args the command line arguments
