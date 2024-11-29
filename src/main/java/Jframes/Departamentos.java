@@ -4,6 +4,12 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Departamento;
+import codigo.Sucursal;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author yorvi
@@ -18,6 +24,7 @@ public class Departamentos extends javax.swing.JFrame {
         setTitle("Gestión de Sucursales");
         setLocationRelativeTo(null);
         setResizable(false);
+        llenarTabla();
     }
 
     /**
@@ -32,7 +39,7 @@ public class Departamentos extends javax.swing.JFrame {
         B_agregarDP = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        T_Sucu = new javax.swing.JTable();
+        T_DEP = new javax.swing.JTable();
         B_Editar = new javax.swing.JButton();
         B_Eliminar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -57,7 +64,7 @@ public class Departamentos extends javax.swing.JFrame {
             }
         });
 
-        T_Sucu.setModel(new javax.swing.table.DefaultTableModel(
+        T_DEP.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -68,7 +75,7 @@ public class Departamentos extends javax.swing.JFrame {
                 "Codigo", "Nombre", "Correo", "Telefono", "Direccion"
             }
         ));
-        jScrollPane1.setViewportView(T_Sucu);
+        jScrollPane1.setViewportView(T_DEP);
 
         B_Editar.setText("Editar Departamento");
         B_Editar.setToolTipText("");
@@ -121,16 +128,14 @@ public class Departamentos extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(95, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(B_agregarDP, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(B_Editar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(B_Eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(B_Eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -138,6 +143,52 @@ public class Departamentos extends javax.swing.JFrame {
 
     private void B_agregarDPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarDPActionPerformed
         // TODO add your handling code here:
+        // Solicitar el código del departamento
+    String codDepartamentoStr = JOptionPane.showInputDialog(this, "Ingrese el código del departamento:");
+    if (codDepartamentoStr == null || codDepartamentoStr.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El código de departamento no puede estar vacío.");
+        return;
+    }
+
+    // Solicitar el nombre del departamento
+    String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del departamento:");
+    if (nombre == null || nombre.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El nombre del departamento no puede estar vacío.");
+        return;
+    }
+
+    // Solicitar la descripción del departamento
+    String descripcion = JOptionPane.showInputDialog(this, "Ingrese la descripción del departamento:");
+    if (descripcion == null || descripcion.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "La descripción del departamento no puede estar vacía.");
+        return;
+    }
+
+    int codDepartamento;
+    try {
+        codDepartamento = Integer.parseInt(codDepartamentoStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El código de departamento debe ser un número.");
+        return;
+    }
+
+    // Crear la conexión y objeto de la clase Departamento
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();
+
+    Departamento departamento = new Departamento(conexion.getConnection());
+
+    // Llamar al método para agregar el departamento
+    boolean success = departamento.agregarDepartamento(codDepartamento, nombre, descripcion);
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, "Departamento agregado exitosamente.");
+
+        // Aquí puedes agregar código para actualizar la tabla si es necesario
+        departamento.llenar(T_DEP);  
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al agregar el departamento.");
+    }
     }//GEN-LAST:event_B_agregarDPActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -152,10 +203,12 @@ public class Departamentos extends javax.swing.JFrame {
 
     private void B_EditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_EditarActionPerformed
         // TODO add your handling code here:
+        editarDepartamento();
     }//GEN-LAST:event_B_EditarActionPerformed
 
     private void B_EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_EliminarActionPerformed
         // TODO add your handling code here:
+        eliminarDepartamento();
     }//GEN-LAST:event_B_EliminarActionPerformed
 
     /**
@@ -193,12 +246,114 @@ public class Departamentos extends javax.swing.JFrame {
             }
         });
     }
+    
+    public void llenarTabla() {
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();
+    
+    Departamento DEP = new Departamento(conexion.getConnection());
+    DefaultTableModel model = DEP.obtenerDepartamentos();
+    
+    if (model.getRowCount() > 0) {
+        T_DEP.setModel(model);
+        System.out.println("Datos añadidos a la tabla.");
+    } else {
+        System.out.println("No se encontraron datos para mostrar.");
+    }
+}
+    
+    private void editarDepartamento() {
+    int selectedRow = T_DEP.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_DEP.getModel();
+        int codDepartamento = (int) model.getValueAt(selectedRow, 0);
+        String nombreDepartamento = (String) model.getValueAt(selectedRow, 1);
+        String descripDepartamento = (String) model.getValueAt(selectedRow, 2);
 
+        boolean continuar = true;
+        while (continuar) {
+            String[] options = {"Nombre", "Descripción", "Cancelar"};
+            int choice = JOptionPane.showOptionDialog(this,
+                "¿Qué campo desea actualizar?",
+                "Seleccionar Campo",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+            switch (choice) {
+                case 0:
+                    nombreDepartamento = JOptionPane.showInputDialog(this, "Nombre del departamento:", nombreDepartamento);
+                    break;
+                case 1:
+                    descripDepartamento = JOptionPane.showInputDialog(this, "Descripción del departamento:", descripDepartamento);
+                    break;
+                case 2:
+                    continuar = false;
+                    break;
+                default:
+                    continuar = false;
+                    break;
+            }
+
+            if (choice != 2 && choice != JOptionPane.CLOSED_OPTION) {
+                int more = JOptionPane.showConfirmDialog(this, "¿Desea actualizar otro campo?", "Continuar", JOptionPane.YES_NO_OPTION);
+                continuar = (more == JOptionPane.YES_OPTION);
+            } else {
+                continuar = false;
+            }
+        }
+
+        // Actualizar la base de datos
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Departamento departamentoDAO = new Departamento(conexion.getConnection());
+        departamentoDAO.actualizarDepartamento(codDepartamento, nombreDepartamento, descripDepartamento);
+        conexion.desconectar();
+
+        // Volver a llenar la tabla con los datos actualizados
+        llenarTabla();
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un departamento para editar.");
+    }
+}
+    private void eliminarDepartamento() {
+    int selectedRow = T_DEP.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_DEP.getModel();
+        int codDepartamento = (int) model.getValueAt(selectedRow, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(this, 
+                "¿Está seguro de que desea eliminar el departamento con código " + codDepartamento + "?",
+                "Confirmar Eliminación",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Eliminar el departamento de la base de datos
+            DatabaseConnection conexion = new DatabaseConnection();
+            conexion.conectarJ();
+            Departamento departamentoDAO = new Departamento(conexion.getConnection());
+            departamentoDAO.eliminarDepartamento(codDepartamento);
+            conexion.desconectar();
+
+            // Volver a llenar la tabla con los datos actualizados
+            llenarTabla();
+            JOptionPane.showMessageDialog(this, "Departamento eliminado exitosamente.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un departamento para eliminar.");
+    }
+}
+
+
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_Editar;
     private javax.swing.JButton B_Eliminar;
     private javax.swing.JButton B_agregarDP;
-    private javax.swing.JTable T_Sucu;
+    private javax.swing.JTable T_DEP;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
