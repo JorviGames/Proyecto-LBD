@@ -75,6 +75,11 @@ public class Menu extends javax.swing.JFrame {
         G_CLIYENV.setText("Gestion de Clientes y Envios");
         G_CLIYENV.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         G_CLIYENV.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        G_CLIYENV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                G_CLIYENVActionPerformed(evt);
+            }
+        });
 
         G_PROVE.setText("Gestion de Proveedores");
         G_PROVE.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -141,6 +146,14 @@ public class Menu extends javax.swing.JFrame {
         DEP.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_G_DEPActionPerformed
+
+    private void G_CLIYENVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_G_CLIYENVActionPerformed
+        // TODO add your handling code here:
+       Menu_Clientes_envio LO = new Menu_Clientes_envio();
+       
+       LO.setVisible(true);
+       setVisible(false);
+    }//GEN-LAST:event_G_CLIYENVActionPerformed
 
     /**
      * @param args the command line arguments

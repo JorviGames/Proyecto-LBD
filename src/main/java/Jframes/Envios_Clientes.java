@@ -15,6 +15,9 @@ public class Envios_Clientes extends javax.swing.JFrame {
      */
     public Envios_Clientes() {
         initComponents();
+        setTitle("Menu Clientes y envios");
+        setLocationRelativeTo(null);
+        setResizable(false);
     }
 
     /**
@@ -94,12 +97,12 @@ public class Envios_Clientes extends javax.swing.JFrame {
                     .addComponent(btnVolverMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(67, 67, 67)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(77, 77, 77)
-                        .addComponent(B_eliminarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(138, Short.MAX_VALUE))
+                        .addComponent(B_eliminarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(69, 69, 69)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(136, Short.MAX_VALUE))
         );
 
         pack();
@@ -107,10 +110,8 @@ public class Envios_Clientes extends javax.swing.JFrame {
 
     private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
         // TODO add your handling code here:
-        Menu menu = new Menu();
-
-        menu.setVisible(true);
-
+        Menu_Clientes_envio LO = new Menu_Clientes_envio();
+        LO.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_btnVolverMenuActionPerformed
 

@@ -15,6 +15,9 @@ public class Envios extends javax.swing.JFrame {
      */
     public Envios() {
         initComponents();
+        setTitle("Menu Clientes y envios");
+        setLocationRelativeTo(null);
+        setResizable(false);
     }
 
     /**
@@ -136,10 +139,8 @@ public class Envios extends javax.swing.JFrame {
 
     private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
         // TODO add your handling code here:
-        Menu menu = new Menu();
-
-        menu.setVisible(true);
-
+        Menu_Clientes_envio LO = new Menu_Clientes_envio();
+        LO.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_btnVolverMenuActionPerformed
 

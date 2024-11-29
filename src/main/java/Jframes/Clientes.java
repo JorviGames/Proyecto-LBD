@@ -4,6 +4,13 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Cliente;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jorge Alfaro
@@ -15,6 +22,10 @@ public class Clientes extends javax.swing.JFrame {
      */
     public Clientes() {
         initComponents();
+        setTitle("Menu Clientes y envios");
+        setLocationRelativeTo(null);
+        setResizable(false);
+        llenarTabla();
     }
 
     /**
@@ -261,16 +272,14 @@ public class Clientes extends javax.swing.JFrame {
 
     private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
         // TODO add your handling code here:
-        Menu menu = new Menu();
-
-        menu.setVisible(true);
-
+        Menu_Clientes_envio LO = new Menu_Clientes_envio();
+        LO.setVisible(true);
         setVisible(false);
-
     }//GEN-LAST:event_btnVolverMenuActionPerformed
 
     private void B_editarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_editarClienteActionPerformed
         // TODO add your handling code here:
+        editarCliente();
     }//GEN-LAST:event_B_editarClienteActionPerformed
 
     private void B_eliminarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_eliminarClienteActionPerformed
@@ -279,6 +288,8 @@ public class Clientes extends javax.swing.JFrame {
 
     private void B_agregarCliente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarCliente2ActionPerformed
         // TODO add your handling code here:
+        agregarCliente();
+
     }//GEN-LAST:event_B_agregarCliente2ActionPerformed
 
     /**
@@ -315,6 +326,245 @@ public class Clientes extends javax.swing.JFrame {
             }
         });
     }
+
+    public void llenarTabla() {
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+
+        Cliente cliente = new Cliente(conexion.getConnection());
+        DefaultTableModel model = cliente.ObtenerClientes();
+
+        if (model.getRowCount() > 0) {
+            T_cliente.setModel(model);
+            System.out.println("Datos añadidos a la tabla.");
+        } else {
+            System.out.println("No se encontraron datos para mostrar.");
+        }
+    }
+
+    public void agregarCliente() {
+        String codClienteStr = JOptionPane.showInputDialog(this, "Ingrese el código del cliente:");
+        if (codClienteStr == null || codClienteStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El código de cliente no puede estar vacío.");
+            return;
+        }
+
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del cliente:");
+        if (nombre == null || nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.");
+            return;
+        }
+
+        String primerApellido = JOptionPane.showInputDialog(this, "Ingrese el primer apellido:");
+        if (primerApellido == null || primerApellido.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El primer apellido no puede estar vacío.");
+            return;
+        }
+
+        String segundoApellido = JOptionPane.showInputDialog(this, "Ingrese el segundo apellido:");
+        if (segundoApellido == null || segundoApellido.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El segundo apellido no puede estar vacío.");
+            return;
+        }
+
+        String numero = JOptionPane.showInputDialog(this, "Ingrese el número de teléfono:");
+        if (numero == null || numero.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El número de teléfono no puede estar vacío.");
+            return;
+        }
+
+        String correo = JOptionPane.showInputDialog(this, "Ingrese el correo:");
+        if (correo == null || correo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El correo no puede estar vacío.");
+            return;
+        }
+
+        // Obtener la lista de números de factura y transacción disponibles
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Cliente cliente = new Cliente(conexion.getConnection());
+        ArrayList<Integer> facturasDisponibles = cliente.obtenerFacturasDisponibles();
+        ArrayList<Integer> transaccionesDisponibles = cliente.obtenerTransaccionesDisponibles();
+
+        if (facturasDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay facturas disponibles para seleccionar.");
+            return;
+        }
+
+        if (transaccionesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay transacciones disponibles para seleccionar.");
+            return;
+        }
+
+        // Mostrar un JComboBox con las facturas disponibles
+        Integer selectedFactura = (Integer) JOptionPane.showInputDialog(
+                this,
+                "Seleccione el número de factura:",
+                "Seleccionar Factura",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                facturasDisponibles.toArray(),
+                facturasDisponibles.get(0)
+        );
+
+        if (selectedFactura == null) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un número de factura.");
+            return;
+        }
+
+        // Mostrar un JComboBox con las transacciones disponibles
+        Integer selectedTransaccion = (Integer) JOptionPane.showInputDialog(
+                this,
+                "Seleccione el número de transacción:",
+                "Seleccionar Transacción",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                transaccionesDisponibles.toArray(),
+                transaccionesDisponibles.get(0)
+        );
+
+        if (selectedTransaccion == null) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un número de transacción.");
+            return;
+        }
+
+        // Lógica para agregar un cliente
+        int codCliente;
+        try {
+            codCliente = Integer.parseInt(codClienteStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El código de cliente debe ser un número.");
+            return;
+        }
+
+        // Llamar al método para agregar el cliente
+        boolean success = cliente.AgregarCliente(codCliente, nombre, primerApellido, segundoApellido, numero, correo, selectedFactura, selectedTransaccion);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Cliente agregado exitosamente.");
+
+            // Actualizar la tabla de clientes
+            cliente.llenar(T_cliente);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el cliente.");
+        }
+    }
+
+    private void editarCliente() {
+        int selectedRow = T_cliente.getSelectedRow();
+        if (selectedRow >= 0) {
+            DefaultTableModel model = (DefaultTableModel) T_cliente.getModel();
+            int codCliente = (int) model.getValueAt(selectedRow, 0);
+            String nombre = (String) model.getValueAt(selectedRow, 1);
+            String primerApellido = (String) model.getValueAt(selectedRow, 2);
+            String segundoApellido = (String) model.getValueAt(selectedRow, 3);
+            String numero = (String) model.getValueAt(selectedRow, 4);
+            String correo = (String) model.getValueAt(selectedRow, 5);
+            int numeroFactura = (int) model.getValueAt(selectedRow, 6);
+            int numTransaccion = (int) model.getValueAt(selectedRow, 7);
+
+            boolean continuar = true;
+            while (continuar) {
+                String[] options = {
+                    "Nombre", "Primer Apellido", "Segundo Apellido",
+                    "Número", "Correo", "Número de Factura",
+                    "Número de Transacción", "Cancelar"
+                };
+                int choice = JOptionPane.showOptionDialog(this,
+                        "¿Qué campo desea actualizar?",
+                        "Seleccionar Campo",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+
+                switch (choice) {
+                    case 0:
+                        nombre = JOptionPane.showInputDialog(this, "Nombre:", nombre);
+                        break;
+                    case 1:
+                        primerApellido = JOptionPane.showInputDialog(this, "Primer Apellido:", primerApellido);
+                        break;
+                    case 2:
+                        segundoApellido = JOptionPane.showInputDialog(this, "Segundo Apellido:", segundoApellido);
+                        break;
+                    case 3:
+                        numero = JOptionPane.showInputDialog(this, "Número:", numero);
+                        break;
+                    case 4:
+                        correo = JOptionPane.showInputDialog(this, "Correo:", correo);
+                        break;
+                    case 5:
+                        DatabaseConnection conexion = new DatabaseConnection();
+                        conexion.conectarJ();
+                        List<Integer> facturasDisponibles = new Cliente(conexion.getConnection()).obtenerFacturasDisponibles();
+                        Integer selectedFactura = (Integer) JOptionPane.showInputDialog(
+                                this,
+                                "Seleccione el número de factura:",
+                                "Seleccionar Factura",
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                facturasDisponibles.toArray(),
+                                facturasDisponibles.get(0)
+                        );
+
+                        if (selectedFactura == null) {
+                            JOptionPane.showMessageDialog(this, "Debe seleccionar un número de factura.");
+                            return;
+                        }
+                        numeroFactura = selectedFactura;
+                        break;
+                    case 6:
+                        DatabaseConnection conexio = new DatabaseConnection();
+                        conexio.conectarJ();
+                        List<Integer> transaccionesDisponibles = new Cliente(conexio.getConnection()).obtenerTransaccionesDisponibles();
+                        Integer selectedTransaccion = (Integer) JOptionPane.showInputDialog(
+                                this,
+                                "Seleccione el número de transacción:",
+                                "Seleccionar Transacción",
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                transaccionesDisponibles.toArray(),
+                                transaccionesDisponibles.get(0)
+                        );
+
+                        if (selectedTransaccion == null) {
+                            JOptionPane.showMessageDialog(this, "Debe seleccionar un número de transacción.");
+                            return;
+                        }
+                        numTransaccion = selectedTransaccion;
+                        break;
+                    case 7:
+                        continuar = false;
+                        break;
+                    default:
+                        continuar = false;
+                        break;
+                }
+
+                if (choice != 7 && choice != JOptionPane.CLOSED_OPTION) {
+                    int more = JOptionPane.showConfirmDialog(this, "¿Desea actualizar otro campo?", "Continuar", JOptionPane.YES_NO_OPTION);
+                    continuar = (more == JOptionPane.YES_OPTION);
+                } else {
+                    continuar = false;
+                }
+            }
+
+            // Actualizar la base de datos
+            DatabaseConnection conexion = new DatabaseConnection();
+            conexion.conectarJ();
+            Cliente clienteDAO = new Cliente(conexion.getConnection());
+            clienteDAO.actualizarCliente(codCliente, nombre, primerApellido, segundoApellido, numero, correo, numeroFactura, numTransaccion);
+            conexion.desconectar();
+
+            // Volver a llenar la tabla con los datos actualizados
+            llenarTabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un cliente para editar.");
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_Editar;
