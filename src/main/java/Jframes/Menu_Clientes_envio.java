@@ -31,7 +31,6 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
 
         J_clientes = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        J_EC = new javax.swing.JButton();
         J_envios = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
@@ -47,14 +46,6 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setText("Gestión de Envios-Clientes");
-
-        J_EC.setText("Envios-clientes");
-        J_EC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        J_EC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                J_ECActionPerformed(evt);
-            }
-        });
 
         J_envios.setText("Envios");
         J_envios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -84,7 +75,6 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(159, 159, 159)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(J_EC, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(J_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(J_envios, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -97,13 +87,11 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(37, 37, 37)
                 .addComponent(J_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(52, 52, 52)
                 .addComponent(J_envios, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(J_EC, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(59, 59, 59)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
 
         pack();
@@ -131,13 +119,6 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
         menu.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_J_enviosActionPerformed
-
-    private void J_ECActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_J_ECActionPerformed
-        // TODO add your handling code here:
-        Envios_Clientes menu = new Envios_Clientes();
-        menu.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_J_ECActionPerformed
 
     /**
      * @param args the command line arguments
@@ -175,7 +156,6 @@ public class Menu_Clientes_envio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton J_EC;
     private javax.swing.JButton J_clientes;
     private javax.swing.JButton J_envios;
     private javax.swing.JButton jButton4;

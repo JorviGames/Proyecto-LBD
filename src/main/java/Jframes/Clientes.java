@@ -284,6 +284,7 @@ public class Clientes extends javax.swing.JFrame {
 
     private void B_eliminarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_eliminarClienteActionPerformed
         // TODO add your handling code here:
+        eliminarCliente();
     }//GEN-LAST:event_B_eliminarClienteActionPerformed
 
     private void B_agregarCliente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarCliente2ActionPerformed
@@ -564,6 +565,32 @@ public class Clientes extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, seleccione un cliente para editar.");
         }
     }
+    
+    private void eliminarCliente() {
+    int selectedRow = T_cliente.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_cliente.getModel();
+        int codCliente = (int) model.getValueAt(selectedRow, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro de que desea eliminar el cliente seleccionado?", 
+            "Confirmar Eliminación", 
+            JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            DatabaseConnection conexion = new DatabaseConnection();
+            conexion.conectarJ();
+            Cliente clienteDAO = new Cliente(conexion.getConnection());
+            clienteDAO.eliminarCliente(codCliente);
+            conexion.desconectar();
+
+            // Actualizar la tabla después de la eliminación
+            llenarTabla(); // Asegúrate de que este método recargue los datos de la tabla desde la base de datos
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un cliente para eliminar.");
+    }
+}
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

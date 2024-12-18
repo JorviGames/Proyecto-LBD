@@ -4,6 +4,13 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Cliente;
+import codigo.Envio;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jorge Alfaro
@@ -18,6 +25,7 @@ public class Envios extends javax.swing.JFrame {
         setTitle("Menu Clientes y envios");
         setLocationRelativeTo(null);
         setResizable(false);
+        llenarTabla();
     }
 
     /**
@@ -123,15 +131,17 @@ public class Envios extends javax.swing.JFrame {
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(B_editarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(77, 77, 77)
+                                .addComponent(B_editarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(B_agregarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addComponent(B_eliminarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(33, 33, 33)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(B_agregarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
-                .addComponent(B_eliminarEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(98, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
@@ -146,14 +156,17 @@ public class Envios extends javax.swing.JFrame {
 
     private void B_editarEnvioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_editarEnvioActionPerformed
         // TODO add your handling code here:
+        actualizarEnvio();
     }//GEN-LAST:event_B_editarEnvioActionPerformed
 
     private void B_eliminarEnvioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_eliminarEnvioActionPerformed
         // TODO add your handling code here:
+        eliminarEnvio();
     }//GEN-LAST:event_B_eliminarEnvioActionPerformed
 
     private void B_agregarEnvioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarEnvioActionPerformed
         // TODO add your handling code here:
+        registrarEnvio();
     }//GEN-LAST:event_B_agregarEnvioActionPerformed
 
     /**
@@ -190,6 +203,154 @@ public class Envios extends javax.swing.JFrame {
             }
         });
     }
+
+    private void llenarTabla() {
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Envio envios = new Envio(conexion.getConnection());
+        DefaultTableModel model = envios.obtenerEnvios();
+        T_envio.setModel(model);
+    }
+
+    public void registrarEnvio() {
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Envio envio = new Envio(conexion.getConnection());
+
+        Envio cliente = new Envio(conexion.getConnection());
+        ArrayList<String> clientesDisponibles = cliente.obtenerClientesDisponibles();
+
+        if (clientesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay clientes disponibles para seleccionar.");
+            return;
+        }
+
+        String selectedCliente = (String) JOptionPane.showInputDialog(
+                this,
+                "Seleccione el cliente:",
+                "Seleccionar Cliente",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                clientesDisponibles.toArray(),
+                clientesDisponibles.get(0)
+        );
+
+        if (selectedCliente == null) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.");
+            return;
+        }
+
+        String numeroEnvioStr = JOptionPane.showInputDialog(this, "Ingrese el número del envío:");
+        if (numeroEnvioStr == null || numeroEnvioStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El número de envío no puede estar vacío.");
+            return;
+        }
+
+        String direccion = JOptionPane.showInputDialog(this, "Ingrese la dirección del envío:");
+        if (direccion == null || direccion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La dirección no puede estar vacía.");
+            return;
+        }
+
+        int numeroEnvio;
+        try {
+            numeroEnvio = Integer.parseInt(numeroEnvioStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El número de envío debe ser un número.");
+            return;
+        }
+
+        int codCliente = cliente.obtenerCodigoCliente(selectedCliente);
+
+        if (codCliente == -1) {
+            JOptionPane.showMessageDialog(this, "El cliente no existe.");
+            return;
+        }
+
+        boolean success = envio.registrarEnvio(numeroEnvio, direccion, codCliente);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Envío registrado exitosamente.");
+
+            envio.llenar(T_envio);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al registrar el envío.");
+        }
+    }
+
+public void actualizarEnvio() {
+    int selectedRow = T_envio.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un envío de la tabla para actualizar.");
+        return;
+    }
+
+    try {
+        String numeroEnvioStr = T_envio.getValueAt(selectedRow, 0).toString();
+        String direccionActual = T_envio.getValueAt(selectedRow, 1).toString();
+
+        int numeroEnvio = Integer.parseInt(numeroEnvioStr);
+
+        String nuevaDireccion = JOptionPane.showInputDialog(this, "Ingrese la nueva dirección del envío:", direccionActual);
+        if (nuevaDireccion == null || nuevaDireccion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La dirección no puede estar vacía.");
+            return;
+        }
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Envio envio = new Envio(conexion.getConnection());
+        boolean success = envio.actualizarEnvio(numeroEnvio, nuevaDireccion);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Envío actualizado exitosamente.");
+            envio.llenar(T_envio);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el envío.");
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error al convertir los valores seleccionados: " + e.getMessage());
+    } catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(this, "Error en el tipo de datos seleccionado: " + e.getMessage());
+    }
+}
+
+public void eliminarEnvio() {
+    int selectedRow = T_envio.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un envío de la tabla para eliminar.");
+        return;
+    }
+
+    try {
+        String numeroEnvioStr = T_envio.getValueAt(selectedRow, 0).toString();
+
+        int numeroEnvio = Integer.parseInt(numeroEnvioStr);
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Envio envio = new Envio(conexion.getConnection());
+        boolean success = envio.eliminarEnvio(numeroEnvio);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Envío eliminado exitosamente.");
+            envio.llenar(T_envio);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al eliminar el envío.");
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error al convertir los valores seleccionados: " + e.getMessage());
+    } catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(this, "Error en el tipo de datos seleccionado: " + e.getMessage());
+    }
+}
+
+
+
+
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_agregarEnvio;

@@ -146,6 +146,19 @@ public class Cliente {
         e.printStackTrace();
     }
 }
+    
+    public void eliminarCliente(int codCliente) {
+    String sql = "{CALL sp_eliminar_cliente(?)}";
+    try (CallableStatement stmt = conn.prepareCall(sql)) {
+        stmt.setInt(1, codCliente);
+        stmt.executeUpdate();
+        System.out.println("Cliente eliminado exitosamente");
+    } catch (SQLException e) {
+        System.out.println("Error al eliminar el cliente");
+        e.printStackTrace();
+    }
+}
+
 
 
 }

@@ -29,6 +29,7 @@ public class Menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         G_SUC = new javax.swing.JButton();
         G_DEP = new javax.swing.JButton();
         G_FACT = new javax.swing.JButton();
@@ -38,7 +39,19 @@ public class Menu extends javax.swing.JFrame {
         G_PROVE = new javax.swing.JButton();
         G_EMPL = new javax.swing.JButton();
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
 
         G_SUC.setText("Gestion de Sucursales");
@@ -62,6 +75,11 @@ public class Menu extends javax.swing.JFrame {
         G_FACT.setText("Gestion de Facturacion ");
         G_FACT.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         G_FACT.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        G_FACT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                G_FACTActionPerformed(evt);
+            }
+        });
 
         G_PRO.setText("Gestion de Productos");
         G_PRO.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -155,6 +173,14 @@ public class Menu extends javax.swing.JFrame {
        setVisible(false);
     }//GEN-LAST:event_G_CLIYENVActionPerformed
 
+    private void G_FACTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_G_FACTActionPerformed
+        // TODO add your handling code here:
+        Facturas LO = new Facturas();
+       
+       LO.setVisible(true);
+       setVisible(false);
+    }//GEN-LAST:event_G_FACTActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -199,5 +225,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JButton G_PRO;
     private javax.swing.JButton G_PROVE;
     private javax.swing.JButton G_SUC;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
