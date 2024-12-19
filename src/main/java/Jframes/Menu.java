@@ -34,9 +34,7 @@ public class Menu extends javax.swing.JFrame {
         G_DEP = new javax.swing.JButton();
         G_FACT = new javax.swing.JButton();
         G_PRO = new javax.swing.JButton();
-        G_INV = new javax.swing.JButton();
         G_CLIYENV = new javax.swing.JButton();
-        G_PROVE = new javax.swing.JButton();
         G_EMPL = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -84,10 +82,11 @@ public class Menu extends javax.swing.JFrame {
         G_PRO.setText("Gestion de Productos");
         G_PRO.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         G_PRO.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        G_INV.setText("Gestion de Inventarios");
-        G_INV.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        G_INV.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        G_PRO.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                G_PROActionPerformed(evt);
+            }
+        });
 
         G_CLIYENV.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         G_CLIYENV.setText("Gestion de Clientes y Envios");
@@ -98,10 +97,6 @@ public class Menu extends javax.swing.JFrame {
                 G_CLIYENVActionPerformed(evt);
             }
         });
-
-        G_PROVE.setText("Gestion de Proveedores");
-        G_PROVE.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        G_PROVE.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         G_EMPL.setText("Gestion de Empleados");
         G_EMPL.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -118,22 +113,19 @@ public class Menu extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(235, 235, 235)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(G_EMPL, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(G_INV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_PRO, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_FACT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_DEP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_SUC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_CLIYENV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(G_PROVE, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(G_CLIYENV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(G_EMPL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(G_SUC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(G_DEP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(G_PRO, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(G_FACT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(231, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(34, 34, 34)
                 .addComponent(G_SUC, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(G_DEP, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -142,14 +134,10 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(G_FACT, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(G_INV, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(G_CLIYENV, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(G_PROVE, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(G_EMPL, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
@@ -194,6 +182,13 @@ public class Menu extends javax.swing.JFrame {
        setVisible(false);
     }//GEN-LAST:event_G_EMPLActionPerformed
 
+    private void G_PROActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_G_PROActionPerformed
+        // TODO add your handling code here:
+        Productos productosSubmenu = new Productos();
+        productosSubmenu.setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_G_PROActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -234,9 +229,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JButton G_DEP;
     private javax.swing.JButton G_EMPL;
     private javax.swing.JButton G_FACT;
-    private javax.swing.JButton G_INV;
     private javax.swing.JButton G_PRO;
-    private javax.swing.JButton G_PROVE;
     private javax.swing.JButton G_SUC;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
