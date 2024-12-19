@@ -4,10 +4,20 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Producto;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jorge Alfaro
  */
+
 public class Productos extends javax.swing.JFrame {
 
     /**
@@ -15,6 +25,10 @@ public class Productos extends javax.swing.JFrame {
      */
     public Productos() {
         initComponents();
+        setTitle("Gestión de Productos");
+        setLocationRelativeTo(null);
+        setResizable(false);
+        llenarTablaProductos();    // Método para llenar la tabla de productos
     }
 
     /**
@@ -136,59 +150,230 @@ public class Productos extends javax.swing.JFrame {
 
     private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
         // TODO add your handling code here:
-        Menu_Clientes_envio LO = new Menu_Clientes_envio();
-        LO.setVisible(true);
-        setVisible(false);
+        Menu menu = new Menu();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverMenuActionPerformed
 
     private void B_agregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarProductoActionPerformed
         // TODO add your handling code here:
-        
+        String codProductoStr = JOptionPane.showInputDialog(this, "Ingrese el código del producto:");
+        int codProducto;
+        try {
+            codProducto = Integer.parseInt(codProductoStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El código de producto debe ser un número válido.");
+            return;
+        }
+
+        // Pedir el nombre del producto
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del producto:");
+        if (nombre == null || nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El nombre del producto no puede estar vacío.");
+            return;
+        }
+
+        // Pedir el precio del producto
+        String precioStr = JOptionPane.showInputDialog(this, "Ingrese el precio del producto:");
+        double precio;
+        try {
+            precio = Double.parseDouble(precioStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.");
+            return;
+        }
+
+        // Pedir el stock del producto
+        String stockStr = JOptionPane.showInputDialog(this, "Ingrese la cantidad en stock del producto:");
+        int stock;
+        try {
+            stock = Integer.parseInt(stockStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El stock debe ser un número válido.");
+            return;
+        }
+
+        // Conectar a la base de datos y agregar el producto
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+
+        Producto nuevoProducto = new Producto(conexion.getConnection());
+
+        // Intentar agregar el producto a la base de datos (sin cod_inventario)
+        boolean success = nuevoProducto.agregarProducto(codProducto, nombre, precio, stock);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
+            llenarTablaProductos(); // Llenar la tabla para reflejar los cambios
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el producto.");
+        }
+
+        conexion.desconectar();
+
     }//GEN-LAST:event_B_agregarProductoActionPerformed
 
     private void B_editarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_editarProductoActionPerformed
         // TODO add your handling code here:
-        
+        String codProductoStr = JOptionPane.showInputDialog(this, "Ingrese el código del producto a editar:");
+    int codProducto;
+    try {
+        codProducto = Integer.parseInt(codProductoStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El código de producto debe ser un número válido.");
+        return;
+    }
+
+    // Pedir el nuevo nombre del producto
+    String nombre = JOptionPane.showInputDialog(this, "Ingrese el nuevo nombre del producto:");
+    if (nombre == null || nombre.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El nombre del producto no puede estar vacío.");
+        return;
+    }
+
+    // Definir la imagen constante para todos los productos
+    String imagen = "https://http2.mlstatic.com/D_NQ_NP_633420-MLA45467093493_042021-F.jpg"; // Imagen constante
+
+    // Pedir el nuevo precio del producto
+    String precioStr = JOptionPane.showInputDialog(this, "Ingrese el nuevo precio del producto:");
+    double precio;
+    try {
+        precio = Double.parseDouble(precioStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.");
+        return;
+    }
+
+    // Pedir la nueva cantidad en stock del producto
+    String stockStr = JOptionPane.showInputDialog(this, "Ingrese la nueva cantidad en stock del producto:");
+    int stock;
+    try {
+        stock = Integer.parseInt(stockStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El stock debe ser un número válido.");
+        return;
+    }
+
+    // Conectar a la base de datos
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();
+
+    Producto producto = new Producto(conexion.getConnection());
+
+    // Intentar actualizar el producto en la base de datos
+    boolean success = producto.editarProducto(codProducto, nombre, imagen, precio, stock);
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, "Producto actualizado exitosamente.");
+        llenarTablaProductos(); // Llenar la tabla para reflejar los cambios
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al actualizar el producto.");
+    }
+
+    // Desconectar de la base de datos
+    conexion.desconectar();
+
     }//GEN-LAST:event_B_editarProductoActionPerformed
 
     private void B_eliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_eliminarProductoActionPerformed
         // TODO add your handling code here:
+        // Obtener la fila seleccionada en la tabla
+        int selectedRow = T_Producto.getSelectedRow(); // 'T_Producto' es la tabla de productos
+
+        // Verificar si se ha seleccionado una fila
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un producto para eliminar.");
+            return;
+        }
+
+        // Obtener el código del producto desde la tabla (asumiendo que el código está en la primera columna)
+        int codProducto = (int) T_Producto.getValueAt(selectedRow, 0); // '0' es la columna del código
+
+        // Crear una instancia de DatabaseConnection y establecer la conexión
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();  // Establecer la conexión a la base de datos
+        Connection conn = conexion.getConnection(); // Obtener la conexión
+
+        // Verificar si la conexión fue exitosa
+        if (conn == null) {
+            JOptionPane.showMessageDialog(this, "No se pudo conectar a la base de datos.");
+            return;
+        }
+
+        // Intentar eliminar el producto
+        Producto producto = new Producto(conn);
+        boolean success = producto.eliminarProducto(codProducto); // Llamamos al método de eliminación
+
+        if (success) {
+            // Si la eliminación fue exitosa, mostrar mensaje
+            JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.");
+            llenarTablaProductos();  // Recargar la tabla de productos después de eliminar
+        } else {
+            // Si no se pudo eliminar, mostrar mensaje de error
+            JOptionPane.showMessageDialog(this, "Error al eliminar el producto.");
+        }
+        conexion.desconectar();
+
     }//GEN-LAST:event_B_eliminarProductoActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /* Set the Nimbus look and feel */
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+     */
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Productos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Productos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Productos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Productos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Productos().setVisible(true);
-            }
-        });
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(Producto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(Producto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(Producto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(Producto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    //</editor-fold>
+    //</editor-fold>
+
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new Productos().setVisible(true);
+        }
+    });
+}
+
+    public void llenarTablaProductos() {
+    // Crear una nueva instancia de la clase DatabaseConnection
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();  // Establecer la conexión
+
+    // Crear una instancia de Producto pasando la conexión a su constructor
+    Producto productos = new Producto(conexion.getConnection());
+
+    // Obtener el modelo de la tabla con los productos
+    DefaultTableModel model = productos.ObtenerProductos();
+
+    // Si hay filas en el modelo, asignar a la tabla
+    if (model.getRowCount() > 0) {
+        T_Producto.setModel(model);
+        System.out.println("Datos añadidos a la tabla.");
+    } else {
+        System.out.println("No se encontraron datos para mostrar.");
+    }
+
+    // Cerrar la conexión después de realizar las operaciones necesarias
+    conexion.desconectar();
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_agregarProducto;
