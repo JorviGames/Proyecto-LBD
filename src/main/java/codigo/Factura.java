@@ -46,9 +46,9 @@ public class Factura {
     }
 
     public boolean AgregarFactura(int numeroFactura, int codProducto) {
-        String query = "INSERT INTO Facturacion (numero_factura, cod_producto) VALUES (?, ?)";
+        String query = "{ CALL AgregarFactura(?, ?) }";  // Llamada al procedimiento almacenado
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (CallableStatement stmt = conn.prepareCall(query)) {
             stmt.setInt(1, numeroFactura);
             stmt.setInt(2, codProducto);
 
@@ -67,23 +67,19 @@ public class Factura {
     }
 
     public boolean eliminarFactura(int numeroFactura) {
-        String query = "DELETE FROM Facturacion WHERE numero_factura = ?";
+        String query = "{ CALL EliminarFactura(?) }";  // Llamada al procedimiento almacenado
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, numeroFactura);  
+        try (CallableStatement stmt = conn.prepareCall(query)) {
+            stmt.setInt(1, numeroFactura);
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Factura eliminada exitosamente.");
-                return true;  
-            } else {
-                System.out.println("No se encontró la factura con el número: " + numeroFactura);
-                return false;  
-            }
+            // Ejecuta la llamada al procedimiento almacenado
+            stmt.executeUpdate();
+            System.out.println("Factura eliminada exitosamente.");
+            return true;
         } catch (SQLException e) {
-            System.out.println("Error al eliminar la factura.");
+            System.out.println("Error al eliminar la factura: " + e.getMessage());
             e.printStackTrace();
-            return false; 
+            return false;
         }
     }
 

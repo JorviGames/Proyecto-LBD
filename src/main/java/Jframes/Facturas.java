@@ -177,6 +177,7 @@ public final class Facturas extends javax.swing.JFrame {
             return;
         }
 
+        // Conexión a la base de datos
         DatabaseConnection conexion = new DatabaseConnection();
         conexion.conectarJ();
 
@@ -186,20 +187,18 @@ public final class Facturas extends javax.swing.JFrame {
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Factura agregada exitosamente.");
-
-            // Si quieres refrescar la tabla después de agregar la factura, puedes llamar a este método:
-            llenarTabla();  // Asegúrate de que llenarTabla actualice correctamente la tabla con los datos más recientes
+            // Llamar a este método si deseas actualizar la tabla con los nuevos datos
+            llenarTabla();
         } else {
             JOptionPane.showMessageDialog(this, "Error al agregar la factura.");
         }
 
+        conexion.desconectar();
     }//GEN-LAST:event_Agregar_facActionPerformed
 
     private void borrar_fac1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrar_fac1ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable3.getSelectedRow();
-
-        // Verificar si se ha seleccionado una fila
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, seleccione una factura para eliminar.");
             return;
@@ -233,6 +232,8 @@ public final class Facturas extends javax.swing.JFrame {
             // Si hubo un error, mostrar mensaje de error
             JOptionPane.showMessageDialog(this, "Error al eliminar la factura.");
         }
+
+        conexion.desconectar();
 
     }//GEN-LAST:event_borrar_fac1ActionPerformed
 
