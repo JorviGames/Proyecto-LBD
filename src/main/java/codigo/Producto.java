@@ -23,41 +23,18 @@ public class Producto {
 
     // Método para agregar un producto
     public boolean agregarProducto(int codProducto, String nombre, double precio, int stock) {
-        String sql = "INSERT INTO Productos (cod_producto, nombre, imagen, precio, stock) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, codProducto);
-            stmt.setString(2, nombre);
-            stmt.setString(3, "https://http2.mlstatic.com/D_NQ_NP_633420-MLA45467093493_042021-F.jpg"); // Imagen constante
-            stmt.setDouble(4, precio);
-            stmt.setInt(5, stock);
-
-            // Ejecutar la consulta
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Si se afectaron filas, la inserción fue exitosa
-        } catch (SQLException e) {
-            e.printStackTrace();  // Imprimir el error en el log
-            return false;
-        }
-    }
-
-    // Método para editar un producto
-    public boolean editarProducto(int codProducto, String nombre, String imagen, double precio, int stock) {
-    // Llamada al procedimiento almacenado en lugar de la consulta SQL directa
-    String sql = "{call sp_actualizar_producto(?, ?, ?, ?, ?)}";
+    String sql = "{CALL AgregarProducto(?, ?, ?, ?)}"; // Llamada al procedimiento almacenado
     
     try (CallableStatement stmt = conn.prepareCall(sql)) {
-        // Establecer los parámetros del procedimiento almacenado
-        stmt.setInt(1, codProducto);       // ID del producto
-        stmt.setString(2, nombre);         // Nombre del producto
-        stmt.setString(3, imagen);         // Imagen del producto
-        stmt.setDouble(4, precio);         // Precio del producto
-        stmt.setInt(5, stock);             // Stock del producto
+        // Establecer los valores de los parámetros del procedimiento
+        stmt.setInt(1, codProducto);
+        stmt.setString(2, nombre);
+        stmt.setDouble(3, precio);
+        stmt.setInt(4, stock);
 
         // Ejecutar el procedimiento almacenado
-        int rowsAffected = stmt.executeUpdate();
-        
-        // Si la actualización afecta filas, se considera exitosa
-        return rowsAffected > 0;
+        int rowsAffected = stmt.executeUpdate(); // Ejecuta el procedimiento
+        return rowsAffected > 0; // Si se afectaron filas, la inserción fue exitosa
     } catch (SQLException e) {
         e.printStackTrace();  // Imprimir el error en el log
         return false;
@@ -65,25 +42,48 @@ public class Producto {
 }
 
 
+    // Método para editar un producto
+    public boolean editarProducto(int codProducto, String nombre, String imagen, double precio, int stock) {
+        // Llamada al procedimiento almacenado en lugar de la consulta SQL directa
+        String sql = "{call sp_actualizar_producto(?, ?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = conn.prepareCall(sql)) {
+            // Establecer los parámetros del procedimiento almacenado
+            stmt.setInt(1, codProducto);       // ID del producto
+            stmt.setString(2, nombre);         // Nombre del producto
+            stmt.setString(3, imagen);         // Imagen del producto
+            stmt.setDouble(4, precio);         // Precio del producto
+            stmt.setInt(5, stock);             // Stock del producto
+
+            // Ejecutar el procedimiento almacenado
+            int rowsAffected = stmt.executeUpdate();
+
+            // Si la actualización afecta filas, se considera exitosa
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();  // Imprimir el error en el log
+            return false;
+        }
+    }
+
     // Método para eliminar un producto
     public boolean eliminarProducto(int codProducto) {
-        String sql = "DELETE FROM Productos WHERE cod_producto = ?";
-        //PreparedStatement stmt = null;
+        String sql = "{CALL EliminarProducto(?)}";  // Llamamos al procedimiento almacenado
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, codProducto); // Establecer el valor del código del producto
-            int rowsAffected = stmt.executeUpdate(); // Ejecutar la eliminación
-            return rowsAffected > 0; // Retorna true si se eliminó al menos una fila
+        try (CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, codProducto);  // Establecer el valor del código del producto
+            int rowsAffected = stmt.executeUpdate();  // Ejecutar la llamada al procedimiento
+            return rowsAffected > 0;  // Retorna true si se eliminó al menos una fila
         } catch (SQLException e) {
             // No se lanza la excepción, solo se captura y se devuelve false
             System.out.println("Error al eliminar el producto: " + e.getMessage());
             return false;
-        } 
+        }
     }
 
     // Método para obtener productos y llenar una tabla
     public DefaultTableModel ObtenerProductos() {
-        DefaultTableModel model = new DefaultTableModel(new String[]{"Código Producto", "Nombre", "Imagen", "Precio", "Stock"}, 0);
+        DefaultTableModel model = new DefaultTableModel(new String[]{"Código Producto", "Nombre", "Precio", "Stock"}, 0);
         String sql = "SELECT cod_producto, nombre, imagen, precio, stock FROM Productos";
         System.out.println("Consulta ejecutada: " + sql);
 
@@ -91,11 +91,10 @@ public class Producto {
             while (rs.next()) {
                 int codProducto = rs.getInt("cod_producto");
                 String nombre = rs.getString("nombre");
-                String imagen = rs.getString("imagen");
                 double precio = rs.getDouble("precio");
                 int stock = rs.getInt("stock");
 
-                model.addRow(new Object[]{codProducto, nombre, imagen, precio, stock});
+                model.addRow(new Object[]{codProducto, nombre, precio, stock});
             }
             System.out.println("Datos obtenidos: " + model.getRowCount() + " filas.");
         } catch (SQLException e) {
