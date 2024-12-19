@@ -4,6 +4,12 @@
  */
 package Jframes;
 
+import baseDatos.DatabaseConnection;
+import codigo.Empleado;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jorge Alfaro
@@ -15,6 +21,9 @@ public class Empleados extends javax.swing.JFrame {
      */
     public Empleados() {
         initComponents();
+        setLocationRelativeTo(null);
+        setResizable(false);
+        llenarTabla();
     }
 
     /**
@@ -146,16 +155,19 @@ public class Empleados extends javax.swing.JFrame {
 
     private void B_agregarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_agregarEmpleadoActionPerformed
         // TODO add your handling code here:
+        agregarEmpleado();
 
     }//GEN-LAST:event_B_agregarEmpleadoActionPerformed
 
     private void B_editarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_editarEmpleadoActionPerformed
         // TODO add your handling code here:
+        actualizarEmpleado();
 
     }//GEN-LAST:event_B_editarEmpleadoActionPerformed
 
     private void B_eliminarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_eliminarEmpleadoActionPerformed
         // TODO add your handling code here:
+        eliminarEmpleado();
     }//GEN-LAST:event_B_eliminarEmpleadoActionPerformed
 
     /**
@@ -192,6 +204,210 @@ public class Empleados extends javax.swing.JFrame {
             }
         });
     }
+
+private void llenarTabla() {
+    DatabaseConnection conexion = new DatabaseConnection();
+    conexion.conectarJ();
+
+    Empleado empleado = new Empleado(conexion.getConnection());
+    DefaultTableModel model = empleado.obtenerEmpleados();
+
+    if (model.getRowCount() > 0) {
+        T_empleados.setModel(model);
+        System.out.println("Datos añadidos a la tabla.");
+    } else {
+        System.out.println("No se encontraron datos para mostrar.");
+    }
+}
+
+public void agregarEmpleado() {
+    try {
+        int codEmpleado = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese el código del empleado:"));
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre:");
+        String primerApellido = JOptionPane.showInputDialog(this, "Ingrese el primer apellido:");
+        String segundoApellido = JOptionPane.showInputDialog(this, "Ingrese el segundo apellido:");
+        String correo = JOptionPane.showInputDialog(this, "Ingrese el correo:");
+        String numero = JOptionPane.showInputDialog(this, "Ingrese el número:");
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        
+        Empleado departamento = new Empleado(conexion.getConnection());
+        ArrayList<String> departamentosDisponibles = departamento.obtenerDepartamentos();
+
+        if (departamentosDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay departamentos disponibles para seleccionar.");
+            return;
+        }
+
+        String selectedDepartamento = (String) JOptionPane.showInputDialog(
+                this,
+                "Seleccione el departamento:",
+                "Seleccionar Departamento",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                departamentosDisponibles.toArray(),
+                departamentosDisponibles.get(0)
+        );
+
+        if (selectedDepartamento == null) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un departamento.");
+            return;
+        }
+
+        int codDepartamento = departamento.obtenerCodigoDepartamento(selectedDepartamento);
+
+        Empleado empleado = new Empleado(conexion.getConnection());
+        boolean success = empleado.insertarEmpleado(codEmpleado, nombre, primerApellido, segundoApellido, correo, numero, codDepartamento);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Empleado agregado exitosamente.");
+            llenarTabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el empleado.");
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error al convertir los valores: " + e.getMessage());
+    }
+}
+
+public void actualizarEmpleado() {
+    int selectedRow = T_empleados.getSelectedRow();
+    if (selectedRow >= 0) {
+        DefaultTableModel model = (DefaultTableModel) T_empleados.getModel();
+        int codEmpleado = (int) model.getValueAt(selectedRow, 0);
+        String nombre = (String) model.getValueAt(selectedRow, 1);
+        String primerApellido = (String) model.getValueAt(selectedRow, 2);
+        String segundoApellido = (String) model.getValueAt(selectedRow, 3);
+        String correo = (String) model.getValueAt(selectedRow, 4);
+        String numero = (String) model.getValueAt(selectedRow, 5);
+        int departamento = (int) model.getValueAt(selectedRow, 6);
+
+        boolean continuar = true;
+        while (continuar) {
+            String[] opciones = {"Nombre", "Primer Apellido", "Segundo Apellido", "Correo", "Número", "Departamento", "Cancelar"};
+            int eleccion = JOptionPane.showOptionDialog(this,
+                "¿Qué campo desea actualizar?",
+                "Seleccionar Campo",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]);
+
+            switch (eleccion) {
+                case 0:
+                    nombre = JOptionPane.showInputDialog(this, "Nombre del empleado:", nombre);
+                    break;
+                case 1:
+                    primerApellido = JOptionPane.showInputDialog(this, "Primer apellido del empleado:", primerApellido);
+                    break;
+                case 2:
+                    segundoApellido = JOptionPane.showInputDialog(this, "Segundo apellido del empleado:", segundoApellido);
+                    break;
+                case 3:
+                    correo = JOptionPane.showInputDialog(this, "Correo del empleado:", correo);
+                    break;
+                case 4:
+                    numero = JOptionPane.showInputDialog(this, "Número del empleado:", numero);
+                    break;
+                case 5:
+                    DatabaseConnection conexion = new DatabaseConnection();
+                    conexion.conectarJ();
+                    Empleado departamentoDAO = new Empleado(conexion.getConnection());
+                    ArrayList<String> departamentosDisponibles = departamentoDAO.obtenerDepartamentos();
+
+                    if (departamentosDisponibles.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "No hay departamentos disponibles para seleccionar.");
+                        return;
+                    }
+
+                    String selectedDepartamento = (String) JOptionPane.showInputDialog(
+                            this,
+                            "Seleccione el departamento:",
+                            "Seleccionar Departamento",
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            departamentosDisponibles.toArray(),
+                            departamentosDisponibles.get(0)
+                    );
+
+                    if (selectedDepartamento == null) {
+                        JOptionPane.showMessageDialog(this, "Debe seleccionar un departamento.");
+                        return;
+                    }
+
+                    departamento = departamentoDAO.obtenerCodigoDepartamento(selectedDepartamento);
+                    break;
+                case 6:
+                    continuar = false;
+                    break;
+                default:
+                    continuar = false;
+                    break;
+            }
+
+            if (eleccion != 6 && eleccion != JOptionPane.CLOSED_OPTION) {
+                int mas = JOptionPane.showConfirmDialog(this, "¿Desea actualizar otro campo?", "Continuar", JOptionPane.YES_NO_OPTION);
+                continuar = (mas == JOptionPane.YES_OPTION);
+            } else {
+                continuar = false;
+            }
+        }
+
+        DatabaseConnection conexion = new DatabaseConnection();
+        conexion.conectarJ();
+        Empleado empleadoDAO = new Empleado(conexion.getConnection());
+        boolean success = empleadoDAO.actualizarEmpleado(codEmpleado, nombre, primerApellido, segundoApellido, correo, numero, departamento);
+        conexion.desconectar();
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Empleado actualizado exitosamente.");
+            // Actualizar la tabla de empleados
+            llenarTabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el empleado.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un empleado para editar.");
+    }
+    
+}
+
+public void eliminarEmpleado() {
+    int selectedRow = T_empleados.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un empleado de la tabla para eliminar.");
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar este empleado?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        try {
+            int codEmpleado = Integer.parseInt(T_empleados.getValueAt(selectedRow, 0).toString());
+
+            DatabaseConnection conexion = new DatabaseConnection();
+            conexion.conectarJ();
+            Empleado empleadoDAO = new Empleado(conexion.getConnection());
+            boolean success = empleadoDAO.eliminarEmpleado(codEmpleado);
+            conexion.desconectar();
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Empleado eliminado exitosamente.");
+                llenarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al eliminar el empleado.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Error al convertir los valores seleccionados: " + e.getMessage());
+        }
+    }
+}
+
+
+
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton B_agregarEmpleado;

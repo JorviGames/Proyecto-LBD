@@ -70,20 +70,20 @@ public class Factura {
         String query = "DELETE FROM Facturacion WHERE numero_factura = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, numeroFactura);  // Establecer el valor del número de factura
+            stmt.setInt(1, numeroFactura);  
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Factura eliminada exitosamente.");
-                return true;  // La eliminación fue exitosa
+                return true;  
             } else {
                 System.out.println("No se encontró la factura con el número: " + numeroFactura);
-                return false;  // No se encontró la factura para eliminar
+                return false;  
             }
         } catch (SQLException e) {
             System.out.println("Error al eliminar la factura.");
             e.printStackTrace();
-            return false;  // Error en la eliminación
+            return false; 
         }
     }
 

@@ -106,6 +106,11 @@ public class Menu extends javax.swing.JFrame {
         G_EMPL.setText("Gestion de Empleados");
         G_EMPL.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         G_EMPL.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        G_EMPL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                G_EMPLActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -180,6 +185,14 @@ public class Menu extends javax.swing.JFrame {
        LO.setVisible(true);
        setVisible(false);
     }//GEN-LAST:event_G_FACTActionPerformed
+
+    private void G_EMPLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_G_EMPLActionPerformed
+        // TODO add your handling code here:
+        Empleados LO = new Empleados();
+       
+       LO.setVisible(true);
+       setVisible(false);
+    }//GEN-LAST:event_G_EMPLActionPerformed
 
     /**
      * @param args the command line arguments

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package codigo;
 
 import java.sql.CallableStatement;
@@ -24,10 +21,9 @@ public class Cliente {
     public DefaultTableModel ObtenerClientes() {
         String query = "SELECT cod_cliente, Nombre, primerApellido, segundoApellido, Numero, Correo, numero_factura, num_transaccion "
                 + "FROM CLIENTES "
-                + "ORDER BY cod_cliente ASC"; // Ordenar de menor a mayor por el código de cliente
+                + "ORDER BY cod_cliente ASC"; 
 
-        System.out.println("Consulta SQL: " + query); // Verifica que la consulta sea la esperada
-
+        System.out.println("Consulta SQL: " + query); 
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new String[]{
             "Código de Cliente", "Nombre", "Primer Apellido", "Segundo Apellido", "Número", "Correo", "Número de Factura", "Número de Transacción"
@@ -64,7 +60,7 @@ public class Cliente {
             stmt.setString(5, numero);
             stmt.setString(6, correo);
             stmt.setInt(7, numeroFactura);
-            stmt.setInt(8, selectedTransaccion); // Asegúrate de incluir este parámetro
+            stmt.setInt(8, selectedTransaccion); 
 
             stmt.executeUpdate();
             return true;
@@ -90,7 +86,7 @@ public class Cliente {
     public void llenar(javax.swing.JTable tabla) {
         String query = "SELECT cod_cliente, Nombre, primerApellido, segundoApellido, Numero, Correo, numero_factura, num_transaccion "
                 + "FROM CLIENTES "
-                + "ORDER BY cod_cliente ASC"; // Ordenar de menor a mayor por el código de cliente
+                + "ORDER BY cod_cliente ASC"; 
         try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
             DefaultTableModel model = (DefaultTableModel) tabla.getModel();
             model.setRowCount(0);

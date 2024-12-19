@@ -304,15 +304,11 @@ public class Departamentos extends javax.swing.JFrame {
                 continuar = false;
             }
         }
-
-        // Actualizar la base de datos
         DatabaseConnection conexion = new DatabaseConnection();
         conexion.conectarJ();
         Departamento departamentoDAO = new Departamento(conexion.getConnection());
         departamentoDAO.actualizarDepartamento(codDepartamento, nombreDepartamento, descripDepartamento);
         conexion.desconectar();
-
-        // Volver a llenar la tabla con los datos actualizados
         llenarTabla();
     } else {
         JOptionPane.showMessageDialog(this, "Por favor, seleccione un departamento para editar.");
